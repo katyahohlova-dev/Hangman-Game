@@ -1,83 +1,28 @@
-import random 
+##
+# Created by KatyaHohlova
+##
 
-def get_world():
-    with open('words.txt', 'r') as file:
-        line = file.readlines()
-    words = [word for line in line for word in line.split()]
-    random_world = random.choice(words)
-    return random_world
-
-
-def drew(mistake):
-    
-    HANGMANPICS = (r"""  
-            +---+
-            |   |
-            O   |
-           /|\  |
-           / \  |
-                |
-            ========= """, r"""  
-            +---+
-            |   |
-            O   |
-           /|\  |
-           /    |
-                |
-            ========= """, r""" 
-            +---+
-            |   |
-            O   |
-           /|\  |
-                |
-                |
-            ========= """, r""" 
-            +---+
-            |   |
-            O   |
-           /|   |
-                |
-                |
-            ========= """, r"""  
-            +---+
-            |   |
-            O   |
-            |   |
-                |
-                |
-            ========= """, r""" 
-            +---+
-            |   |
-            O   |
-                |
-                |
-                |
-            ========= """ , r""" 
-            +---+
-            |   |
-                |
-                |
-                |
-                |
-            ========= """, r"""
-            +---+ 
-                |
-                |
-                |
-                |
-                |
-            ========= """ 
-        )
-    
-    print(HANGMANPICS[mistake])
-
-max_wrong = 7 #всего попыток для разгадывания слова
+import random
+from typing import List, Tuple
+from hangman import HANGMANPICS
+import re
 
 
-def main(): #новая игра
+def draw_status(num_mistakes: int, hangman_pictures: List[str] = HANGMANPICS) -> None:
+    print(hangman_pictures[num_mistakes])
 
-    while True: 
 
+def generation_word(filename: str = 'words.txt')-> Tuple[str, List[str]]:
+    with open(filename, 'r', encoding='utf-8') as file:
+        list_words = list(map(str.strip, file.readlines()))
+
+    random_word = random.choice(list_words)
+    hidden_word = ['_' for _ in range(len(random_word))]
+    return random_word, hidden_word
+
+
+def main()-> None:
+    while True:
         print(
         """
         Команды игры 'Висилица':
@@ -86,83 +31,96 @@ def main(): #новая игра
         """
         )
 
-        used = [] #использованные буквы
         input_choice = input("Ваш выбор: ")
-        
+
         match input_choice:
             case '0': 
                 print('Bye!')
                 return 
             case '1':
-                
-                random_world = get_world()
-                
-                hidden_world = ['_' for _ in range(len(random_world))]
-
                 print("Добро пожаловать в игру 'Висилица'.")
-                print(f'Загаданное слово：{' '.join(hidden_world)}')
-                print(f'У тебя всего попыток {max_wrong}')
-                
-                check_letter(random_world, hidden_world, used)
+                start_game_round()
             case _:
-                print('Извините, в меню нет данного пункта. Пожалуйста, попробуйте снова.')
-                continue 
-            
+                print("Извините, в меню нет данного пункта. Пожалуйста, попробуйте снова.")
+                continue
 
-def show_result(curr_wrong, used, hidden_world, random_world): #отображение промежточного результата
-    drew(max_wrong - curr_wrong)
-    print(f'Вы отгадали следующие буквы:\n{hidden_world}')
-    print(f'Введенные буквы: {', '.join(used)}')
-    print(f'Ошибки: {curr_wrong}')
 
-    if curr_wrong < max_wrong and ''.join(random_world) != ''.join(hidden_world):
-        return False
-    elif random_world==''.join(hidden_world):
-        print(f'Поздравляем, ты победил! У тебя осталось {max_wrong-curr_wrong} неизрасходанных попыток')
-        return True
-    else:
-        print('Упс.. Игра окончена.')
-        print(f'Загаданное слово было следующим: {''.join(random_world)}')
-        return True
-    
+def validation_letter(letter: str) -> bool:
+    return (isinstance(letter, str)
+            and len(letter) == 1
+            and re.match(r'^[а-яА-Я]+$', letter)
+            )
 
-def check_used(letter, used): #проверка буквы в списке введенных букв 
-    if letter not in used:
-        used.append(letter) 
-        return True 
-    else:
-        print(f'Данная буква уже использовалась: {','.join(used)}')
-        return False
-    
 
-def check_letter(random_world, hidden_world, used): #проверка наличия буквы в слове 
+def make_input_letter(used_letters: List[str]) -> str|None:
+    while True:
+        user_input = input('Введите букву: ').lower().strip()
+        if not validation_letter(user_input):
+            print('Неккоректный ввод')
+            continue
+
+        if  is_letter_used(user_input, used_letters):
+            print(f"Данная буква уже использовалась: {','.join(used_letters)}")
+            continue
+
+        return user_input
+
+
+def start_game_loop(random_word: str, hidden_word: List[str], max_wrong: int) -> None:
+    used_letters = []
     curr_wrong = 0
-    word_list = list(random_world)
 
     while True:
-        letter = input('Введите букву: ').lower().strip()
-        if len(letter) != 1 or not letter.isalpha():
-            print('Неверный ввод')
-            continue
-
-        if not check_used(letter, used):
-            continue
-
-        if letter in word_list:
-            for i in range(len(word_list)):
-                if  word_list[i] == letter:
-                    hidden_world[i] = letter
-                    word_list[i] = '_' #замена отгаданной буквы на _
+        input_letter = make_input_letter(used_letters)
+        used_letters.append(input_letter)
+        if input_letter in random_word:
+            open_letter_in_mask(input_letter, random_word, hidden_word)
         else:
             curr_wrong += 1
-        
-        if show_result(curr_wrong, used, hidden_world, random_world):
+
+        game_over, message = check_game_status(random_word, hidden_word, curr_wrong, max_wrong)
+        draw_status(max_wrong - curr_wrong)
+        show_result(curr_wrong, used_letters, hidden_word)
+
+        if game_over:
+            print(message)
             break
+
+
+def start_game_round()-> None:
+    max_wrong = len(HANGMANPICS) - 1
+    new_random_word, hidden_random_word = generation_word('words.txt')
+    draw_status(max_wrong)
+    print(f"Загаданное слово：{' '.join(hidden_random_word)}")
+    print(f"Всего попыток: {max_wrong}")
+    start_game_loop(new_random_word, hidden_random_word, max_wrong)
+
+
+def open_letter_in_mask(letter:str, random_word:str, hidden_word:List[str]) -> None:
+    word_list = list(random_word)
+
+    for i in range(len(word_list)):
+        if word_list[i] == letter:
+            hidden_word[i] = letter
+
+
+def check_game_status(random_word: str, hidden_word: List[str], curr_wrong: int, max_wrong: int) -> Tuple[bool, str]:
+    if  random_word == ''.join(hidden_word):
+        return True, f"Поздравляем, ты победил! Загаданное слово было следующее: {random_word}"
+    if curr_wrong >= max_wrong:
+        return True, f"Упс...Игра окончена. Загаданное слово было сдедующее: {random_word}"
+    return False, ''
+
+
+def show_result(curr_wrong: int, used_letters: List[str], hidden_word: List[str]) -> None:
+    print(f"Отгаданные буквы:\n{hidden_word}")
+    print(f"Введенные буквы: {', '.join(used_letters)}")
+    print(f"Ошибки: {curr_wrong}")
+
+
+def is_letter_used(letter:str, used_letters:List[str]) -> bool:
+    return letter in used_letters
+
 
 if __name__ == '__main__':
     main()
-    
-
-
-
-
