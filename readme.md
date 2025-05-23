@@ -12,6 +12,6 @@
 - По завершению игры выводится результат (победа или поражение) и возвращаемся к состоянию #1 - предложение начать новую игру или выйти из приложения
  
 ## Интерфейс проекта 
-<img src="https://github.com/katyahohlova-dev/Hangman-Game/blob/assets/img/Снимок%20экрана%202025-05-23%20в%2011.27.05.png" width="250" height="250"/>
-<img src="https://github.com/katyahohlova-dev/Hangman-Game/blob/assets/img/Снимок%20экрана%202025-05-23%20в%2011.27.47.png" width="250" height="250"/>
-<img src="https://github.com/katyahohlova-dev/Hangman-Game/blob/assets/img/Снимок%20экрана%202025-05-23%20в%2011.28.27.png" width="250" height="250"/>
+<img src="https://github.com/katyahohlova-dev/Hangman-Game/blob/assets/img/Снимок%20экрана%202025-05-23%20в%2011.27.05.png" width="270" height="250"/>
+<img src="https://github.com/katyahohlova-dev/Hangman-Game/blob/assets/img/Снимок%20экрана%202025-05-23%20в%2011.27.47.png" width="270" height="250"/>
+<img src="https://github.com/katyahohlova-dev/Hangman-Game/blob/assets/img/Снимок%20экрана%202025-05-23%20в%2011.28.27.png" width="300" height="250"/>
