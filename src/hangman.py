@@ -1,4 +1,4 @@
-HANGMANPICS = [
+HANGMANPICS: list[str] = [
 r"""
             +---+
             |   |

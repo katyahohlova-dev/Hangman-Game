@@ -25,7 +25,7 @@ def main()-> None:
     while True:
         print(
         """
-        Команды игры 'Висилица':
+        Команды игры 'Виселица':
         0 - Выйти
         1 - Начать новую игру
         """
@@ -38,7 +38,7 @@ def main()-> None:
                 print('Bye!')
                 return 
             case '1':
-                print("Добро пожаловать в игру 'Висилица'.")
+                print("Добро пожаловать в игру 'Виселица'.")
                 start_game_round()
             case _:
                 print("Извините, в меню нет данного пункта. Пожалуйста, попробуйте снова.")
@@ -56,7 +56,7 @@ def make_input_letter(used_letters: List[str]) -> str|None:
     while True:
         user_input = input('Введите букву: ').lower().strip()
         if not validation_letter(user_input):
-            print('Неккоректный ввод')
+            print('Некорректный ввод')
             continue
 
         if  is_letter_used(user_input, used_letters):
@@ -66,6 +66,7 @@ def make_input_letter(used_letters: List[str]) -> str|None:
         return user_input
 
 
+#функция реализует основной игровой цикл
 def start_game_loop(random_word: str, hidden_word: List[str], max_wrong: int) -> None:
     used_letters = []
     curr_wrong = 0
@@ -108,7 +109,7 @@ def check_game_status(random_word: str, hidden_word: List[str], curr_wrong: int,
     if  random_word == ''.join(hidden_word):
         return True, f"Поздравляем, ты победил! Загаданное слово было следующее: {random_word}"
     if curr_wrong >= max_wrong:
-        return True, f"Упс...Игра окончена. Загаданное слово было сдедующее: {random_word}"
+        return True, f"Упс...Игра окончена. Загаданное слово было следующее: {random_word}"
     return False, ''
 
 
